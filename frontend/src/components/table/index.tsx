@@ -1,43 +1,47 @@
 
 import React from 'react';
 import Post from '../post';
+import { Context } from '../application/postsProvider';
 import styles from './styles.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { postType } from '../application/types';
 
+type postType = {
+    name: string,
+    description: string
+}
 
+type contextType = {
+    posts: postType[],
+    setPosts: Function
+}
 
 export default function Table() {
-    const posts: any = useSelector(state => state); //PORQUE NO SIRVE DARLE EL TIPO postType[]
-    const dispatch = useDispatch();
+    let context: contextType = React.useContext(Context);
 
     React.useEffect(() => {
         fetch(process.env.REACT_APP_BACKEND_URL + '/api/read', {method: 'POST'})
         .then(response => response.json())
-        .then(json => dispatch({
-            type: 'setPosts',
-            posts: json.posts
-        }));
+        .then(json => context.setPosts(json.posts));
     }, []);
 
     const createPost = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        dispatch({
-            type: 'createPost',
-            post: {
-                name: event.currentTarget.newName.value,
-                description: event.currentTarget.newDescription.value
-            }
-        })
-        event.currentTarget.newName.value = '';
-        event.currentTarget.newDescription.value = '';
+        let name = event.currentTarget.newName.value;
+        let description = event.currentTarget.newDescription.value;
+        let nameIsUsed = context.posts.find((post:postType) => post.name === name) !== undefined;
+        if (!nameIsUsed) {
+            context.setPosts((posts:postType[]) => [...posts, {name, description}]);
+            event.currentTarget.newName.value = '';
+            event.currentTarget.newDescription.value = '';
+        } else {
+            alert(`El nombre ${name} ya está en uso.`);
+        }
     }
 
     const savePosts = async () => {
         await fetch(process.env.REACT_APP_BACKEND_URL + '/api/set', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({posts: posts})
+            body: JSON.stringify({posts: context.posts})
         });
 
         alert('Guardado con éxito');
@@ -56,7 +60,7 @@ export default function Table() {
                     </tr>
                 </thead>
                 <tbody>
-                    {posts.map((post:postType) => <Post key={post.name} name={post.name} description={post.description} />)}
+                    {context.posts.map((post:postType) => <Post key={post.name} name={post.name} description={post.description} />)}
                     <tr>
                         <td>
                             <textarea name='newName' placeholder='Nuevo nombre'></textarea>

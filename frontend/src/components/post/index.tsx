@@ -1,32 +1,42 @@
 
 import React from 'react';
 import { FiDelete } from 'react-icons/fi'
-import { useDispatch, useSelector } from 'react-redux';
+import { Context } from '../application/postsProvider';
 import styles from './styles.module.css';
-import { postType } from '../application/types';
 
+type postType = {
+    name: string,
+    description: string,
+}
 
+type contextType = {
+    posts: postType[],
+    setPosts: Function
+}
 
 
 export default function Post(props: postType) {
-    const state = useSelector(state => state);
-    const dispatch = useDispatch();
+    const context: contextType = React.useContext(Context);
 
     const deletePost = () => {
-        dispatch({
-            type: 'deletePost',
-            name: props.name
-        });
+        context.setPosts((posts:postType[]) => {
+            return posts.filter((post:postType) => post.name !== props.name);
+        })
     }
 
 
     const updatePost = (event: React.FocusEvent<HTMLTextAreaElement>) => {
-        dispatch({
-            type: 'updatePost',
-            post: {
-                name: props.name,
-                description: event.target.value
-            }
+        context.setPosts((posts:postType[]) => {
+            return posts.map((post:postType): postType => {
+                if (post.name !== props.name) {
+                    return post;
+                } else {
+                    return {
+                        name: props.name,
+                        description: event.target.value
+                    };
+                }
+            });
         });
     }
 
@@ -43,3 +53,4 @@ export default function Post(props: postType) {
         </tr>
     );
 }
+
