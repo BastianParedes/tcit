@@ -50,7 +50,9 @@ export default function Table() {
             <table>
                 <thead>
                     <tr>
-                        <input type="text" placeholder='Filtro' value={nameFilter} onChange={(event) => setNameFilter(event.target.value)}/>
+                        <th>
+                            <input type="text" placeholder='Filtro' value={nameFilter} onChange={(event) => setNameFilter(event.target.value)}/>
+                        </th>
                     </tr>
                     <tr>
                         <th>Nombre</th>
