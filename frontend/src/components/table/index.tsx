@@ -8,6 +8,7 @@ import { postType } from '../application/types';
 
 
 export default function Table() {
+    const [nameFilter, setNameFilter] = React.useState('');
     const posts: any = useSelector(state => state); //PORQUE NO SIRVE DARLE EL TIPO postType[]
     const dispatch = useDispatch();
 
@@ -43,10 +44,16 @@ export default function Table() {
         alert('Guardado con éxito');
     }
 
+
     return (
         <form onSubmit={createPost}>
             <table>
                 <thead>
+                    <tr>
+                        <th>
+                            <input type="text" placeholder='Filtro' value={nameFilter} onChange={(event) => setNameFilter(event.target.value)}/>
+                        </th>
+                    </tr>
                     <tr>
                         <th>Nombre</th>
                         <th>Descripción</th>
@@ -56,7 +63,10 @@ export default function Table() {
                     </tr>
                 </thead>
                 <tbody>
-                    {posts.map((post:postType) => <Post key={post.name} name={post.name} description={post.description} />)}
+                    {posts
+                        .filter((post:postType) => post.name.includes(nameFilter))
+                        .map((post:postType) => <Post key={post.name} name={post.name} description={post.description} />)
+                    }
                     <tr>
                         <td>
                             <textarea name='newName' placeholder='Nuevo nombre'></textarea>
