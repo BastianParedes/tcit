@@ -46,13 +46,14 @@ export default function Table() {
     }
 
     const savePosts = async () => {
-        await fetch(process.env.REACT_APP_BACKEND_URL + '/api/set', {
+        let response =  await fetch(process.env.REACT_APP_BACKEND_URL + '/api/set', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({posts: posts})
         });
 
-        alert('Guardado con éxito');
+        let responseText = await response.text();
+        alert(responseText);
     }
 
     return (

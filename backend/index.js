@@ -45,14 +45,12 @@ app.post('/api/set', express.json(), async function (req, res) {
             await pool.query(format(`INSERT INTO posts (name, description) VALUES %L;`, sqlArray));
         }
         await pool.query(`COMMIT`);
+        res.send('Éxito');
     }
     catch (error) {
         await pool.query(`ROLLBACK`);
-        console.log(error)
+        res.send('Fallo');
     }    
-    finally {
-        res.end();
-    }
 });
 
 
@@ -64,8 +62,8 @@ app.post('/api/read', async function (req, res) {
     try {
         let response = await pool.query('SELECT name, description FROM posts;');
         res.json({posts: response.rows});
-    } catch (error ){
-        console.log(error);
+    }
+    catch (error){
         res.json({posts: []});
     }
 });
