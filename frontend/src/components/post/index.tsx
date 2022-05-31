@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { FiDelete } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.css';
 import { postType } from '../application/types';
@@ -30,16 +29,15 @@ export default function Post(props: postType) {
         });
     }
 
-    return(
-        <tr>
+    return (
+        <tr id={props.name}>
             <th>{props.name}</th>
             <th>
                 <textarea defaultValue={props.description} onBlur={updatePost}></textarea>
             </th>
             <th>
-                <button className={styles['button-delete']} onClick={deletePost}><FiDelete /></button>
+                <input type='button' className={styles['button-delete']} name={props.name} form='' value='Eliminar' />
             </th>
-            
         </tr>
     );
 }

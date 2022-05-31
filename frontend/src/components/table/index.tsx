@@ -22,6 +22,7 @@ export default function Table() {
 
     const createPost = (event:React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (event.currentTarget.newName.value.trim() === '') return;
         dispatch({
             type: 'createPost',
             post: {
@@ -31,6 +32,17 @@ export default function Table() {
         })
         event.currentTarget.newName.value = '';
         event.currentTarget.newDescription.value = '';
+    }
+
+
+    const deletePost = (event: React.MouseEvent) => {
+        const target = event.target as HTMLInputElement;
+        if (target.toString() === '[object HTMLInputElement]') {
+            dispatch({
+                type: 'deletePost',
+                name: target.name
+            });
+        }
     }
 
     const savePosts = async () => {
@@ -44,8 +56,9 @@ export default function Table() {
     }
 
     return (
-        <form onSubmit={createPost}>
-            <table>
+        <>
+            <form id='formCreator' onSubmit={createPost}></form>
+            <table onClick={deletePost}>
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -56,21 +69,21 @@ export default function Table() {
                     </tr>
                 </thead>
                 <tbody>
-                    {posts.map((post:postType) => <Post key={post.name} name={post.name} description={post.description} />)}
+                    {posts.map((post:postType) => <Post key={post.name} name={post.name} description={post.description}/>)}
                     <tr>
                         <td>
-                            <textarea name='newName' placeholder='Nuevo nombre'></textarea>
+                            <textarea name='newName' form='formCreator' placeholder='Nuevo nombre'></textarea>
                         </td>
                         <td>
-                            <textarea name='newDescription' placeholder='Nueva descripción'></textarea>
+                            <textarea name='newDescription' form='formCreator' placeholder='Nueva descripción'></textarea>
                         </td>
                         <td>
-                            <button className={styles['button-create']}>Agregar fila</button>
+                            <button className={styles['button-create']} form='formCreator'>Agregar fila</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </form>
+        </>
     );
 }
 
